@@ -6,11 +6,20 @@ public class GameData
 {
     private Dictionary<string, string> gameDataMap = new Dictionary<string, string> ();
 
-    public bool TryGetGameData<T> (string key, out T data) where T : new ()
+    public void RegisterGameState (string key, string data)
+    {
+        if (gameDataMap.ContainsKey (key))
+        {
+            gameDataMap[key] = data;
+            return;
+        }
+        gameDataMap.Add (key, data);
+    }
+    
+    public bool TryGetGameData<T> (string key, ref T data) where T : new ()
     {
         if (!gameDataMap.TryGetValue (key, out var json))
         {
-            data = default (T);
             return false;
         }
 
@@ -18,7 +27,7 @@ public class GameData
         return true;
     }
 
-    public bool TryGetGameBehaviourData<T> (string key, T data) where T : Object
+    public bool TryGetGameBehaviourData<T> (string key, ref T data) where T : Object
     {
         if (!gameDataMap.TryGetValue (key, out var json))
         {
